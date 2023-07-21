@@ -70,6 +70,7 @@ const login = async (req, res, next) => {
         await User.findByIdAndUpdate(user._id, { $push: { token: signed } })
 
         res.status(200).json({
+            error: false,
             message: ' login succesfully',
             user,
             token: signed
@@ -95,7 +96,7 @@ const logout = async (req, res, next) => {
         }
 
         return res.status(200).json({
-            error: true,
+            error: false,
             message: 'logout succesfully'
         })
     } catch (err) {

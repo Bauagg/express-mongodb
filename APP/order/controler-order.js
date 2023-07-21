@@ -40,6 +40,7 @@ const postOrder = async (req, res, next) => {
         const { delivery_address, delivery_fee } = req.body
 
         const items = await Cart.find({ user: req.user._id }).populate('product')
+        console.log(items)
 
         if (!items || items.length === 0) {
             return res.status(200).json({
@@ -65,11 +66,11 @@ const postOrder = async (req, res, next) => {
 
         const orderItem = await OrderItem.insertMany(items.map((item) => ({
             ...item,
-            name: item.product.name,
+            name: item.name,
             qty: parseInt(item.qty),
-            price: parseInt(item.product.price),
+            price: parseInt(item.price),
             order: newOrder._id,
-            product: item.product._id
+            product: item._id
         })))
 
         orderItem.forEach(element => {

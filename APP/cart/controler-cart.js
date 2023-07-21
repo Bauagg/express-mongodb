@@ -39,9 +39,9 @@ const putCart = async (req, res, next) => {
 
         let cartItems = items.map((item) => {
             let relateProduct = newProduct.find((product) => product._id.toString() === item.product.id)
-
+            console.log(relateProduct)
             return {
-                product: relateProduct._id,
+                product: relateProduct.id,
                 price: relateProduct.price,
                 image: relateProduct.image,
                 name: relateProduct.name,

@@ -6,7 +6,7 @@ const police_ceck = (action, subject) => {
             const policy = policyFor(req.user)
 
             if (!policy.can(action, subject)) {
-                return res.status(300).json({
+                return res.status(400).json({
                     message: `You are no allowed to ${action} ${subject}`
                 })
             }
