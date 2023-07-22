@@ -4,7 +4,7 @@ const policies = {
     guest(user, { can }) {
         can('read', 'product')
     },
-    user(user, { can }) {
+    users(user, { can }) {
         can('view', 'Order')
         can('create', 'Order')
         can('read', 'Order', { user_id: user._id })

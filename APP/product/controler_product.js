@@ -66,31 +66,36 @@ const getProductById = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
     try {
-        let payload = req.body
+        const { name, descriptions, stock, price, image, category, tags } = req.body
 
         // relasional one tu many
-        if (payload.category) {
-            let newCategory = await Category.findOne({ name: { $regex: payload.category, $options: 'i' } })
+        let categoryID = null;
+        if (category) {
+            let newCategory = await Category.findOne({ name: { $regex: category, $options: 'i' } })
 
             if (newCategory) {
-                payload = { ...payload, category: newCategory._id }
-            } else {
-                delete payload.category
+                categoryID = newCategory._id;
             }
         }
-
         // relasional many to many
-        if (payload.tags && payload.tags.length > 0) {
-            const newTags = await Tags.find({ name: { $in: payload.tags } })
+        let tagIDs = [];
+        if (tags && tags.length > 0) {
+            const newTags = await Tags.find({ name: { $in: tags } })
 
             if (newTags.length) {
-                payload = { ...payload, tags: newTags.map((tag) => tag._id) }
-            } else {
-                delete payload.tags
+                tagIDs = newTags.map((tag) => tag._id);
             }
         }
 
-        const newProduct = await Product.create({ ...payload })
+        const newProduct = await Product.create({
+            name,
+            descriptions,
+            stock,
+            price,
+            image,
+            category: categoryID,
+            tags: tagIDs
+        })
 
         res.status(201).json({
             error: false,
@@ -111,28 +116,35 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
     try {
-        let payload = req.body
-        if (payload.category) {
-            let newCategory = await Category.findOne({ name: { $regex: payload.category, $options: 'i' } })
+        const { name, descriptions, stock, price, image, category, tags } = req.body
+
+        let categoryID = null;
+        if (category) {
+            let newCategory = await Category.findOne({ name: { $regex: category, $options: 'i' } })
 
             if (newCategory) {
-                payload = { ...payload, category: newCategory._id }
-            } else {
-                delete payload.category
+                categoryID = newCategory._id;
             }
         }
 
-        if (payload.tags && payload.tags.length > 0) {
-            const newTags = await Tags.find({ name: { $in: payload.tags } })
+        let tagIDs = [];
+        if (tags && tags.length > 0) {
+            const newTags = await Tags.find({ name: { $in: tags } })
 
-            if (newTags) {
-                payload = { ...payload, tags: newTags.map((tag) => tag._id) }
-            } else {
-                delete payload.tags
+            if (newTags.length) {
+                tagIDs = newTags.map((tag) => tag._id);
             }
         }
 
-        const newProduct = await Product.updateOne({ _id: req.params.id }, { ...payload })
+        const newProduct = await Product.updateOne({ _id: req.params.id }, {
+            name,
+            descriptions,
+            stock,
+            price,
+            image,
+            category: categoryID,
+            tags: tagIDs
+        })
 
         if (newProduct.modifiedCount === 1) {
             return res.status(201).json({

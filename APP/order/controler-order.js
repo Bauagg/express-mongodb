@@ -10,6 +10,7 @@ const getOrder = async (req, res, next) => {
         const { skip = 0, limit = 0 } = req.query
 
         const orders = await Order.find({ user: req.user._id })
+        console.log(order)
 
         const newOrder = await Order.find({ user: req.user._id })
             .skip(parseInt(skip))
